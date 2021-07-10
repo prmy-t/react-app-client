@@ -1,0 +1,10 @@
+.toastFound {
+  color: red;
+}
+.toastSigned {
+  color: indigo;
+}
+
+.toastExist {
+  color: green;
+}
