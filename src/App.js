@@ -1,55 +1,61 @@
 import { Route, Switch, useHistory } from "react-router-dom";
 import { Container, Modal, Button } from "react-bootstrap";
-import { useEffect } from "react";
+
 import { useDispatch, useSelector } from "react-redux";
 import { boolActions } from "./store/boolSlice";
 import { useCookies } from "react-cookie";
 import { userActions } from "./store/userSlice";
 import Account from "./pages/public/Account";
-import { authActions } from "./store/authSlice";
+import axios from "axios";
 
-//page_imports
+//public_page_imports
 import Login from "./pages/public/Login";
 import Home from "./pages/public/Home";
 import Services from "./pages/public/Services";
 import NavBar from "./components/UI/NavBar";
 import BookService from "./pages/public/BookService";
 import Signup from "./pages/public/Signup";
+//admin_page_imports
 import AdminLogin from "./pages/admin/AdminLogin";
-
-import EthHome from "./pages/eth/EthHome";
-
+import Orders from "./pages/admin/Orders";
+import PersonalOrder from "./pages/admin/PersonalOrder";
+import { useEffect } from "react";
+// import EthHome from "./pages/eth/EthHome";
 const App = () => {
   const history = useHistory();
+  const admin = useSelector((state) => state.bools.admin) ? "admin" : null;
   const logOutModal = useSelector((state) => state.bools.logOutModal);
   const dispatch = useDispatch(boolActions);
-  const [cookies, setCookie, removeCookie] = useCookies(["isLoggedIn"]);
+  const [cookies, , removeCookie] = useCookies(["isLoggedIn"]);
+
+  if (cookies.isLoggedIn)
+    axios.defaults.headers.common["Authorization"] = cookies.token;
   useEffect(() => {
     if (cookies.activeUser && cookies.isLoggedIn) {
+      if (cookies.activeUser.firstName === "admin")
+        dispatch(boolActions.setAdmin(true));
       dispatch(boolActions.setIsLoggedIn(cookies.isLoggedIn));
       dispatch(userActions.setUser(cookies.activeUser));
     }
-    // if (cookies.token) {
-    //   console.log("hello ne");
-    //   dispatch(authActions.reverify(cookies.token));
-    //   console.log("done");
-    // }
-  }, []);
+  }, [cookies, dispatch]);
 
   const closeHandler = () => {
     dispatch(boolActions.setLogOutModal(false));
   };
   const logOutHandler = () => {
+    console.log("logout handler");
     removeCookie("isLoggedIn");
     removeCookie("activeUser");
     removeCookie("token");
     dispatch(boolActions.setLogOutModal(false));
     dispatch(boolActions.setIsLoggedIn(false));
+    dispatch(boolActions.setAdmin(false));
+
     history.push("/login");
   };
   return (
     <Container>
-      <NavBar />
+      <NavBar admin={admin} />
       <Modal
         show={logOutModal}
         onHide={closeHandler}
@@ -89,9 +95,15 @@ const App = () => {
         <Route path="/admin">
           <AdminLogin />
         </Route>
-        <Route path="/eth-home">
-          <EthHome />
+        <Route path="/orders" exact>
+          <Orders />
         </Route>
+        <Route path="/orders/:email" exact>
+          <PersonalOrder />
+        </Route>
+        {/* <Route path="/eth-home">
+          <EthHome />
+        </Route> */}
       </Switch>
     </Container>
   );

@@ -22,14 +22,14 @@ import {
   FaFileAlt,
 } from "react-icons/fa";
 import { useSelector } from "react-redux";
-// params.serviceName.split("-").join(" ");
+
 const ServiceForm = (props) => {
   const params = useParams();
   const history = useHistory();
 
   const user = useSelector((state) => state.user);
   const serviceType = params.serviceName.split("-").join(" ");
-  const [filled, setFilled] = useState(false);
+  const [filled] = useState(false);
   const [full, setFull] = useState(false);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);

@@ -1,27 +1,26 @@
 import { useEffect, useState } from "react";
-import { Container, Col, Row, Card } from "react-bootstrap";
+import { Container, Col, Row, Card, Spinner } from "react-bootstrap";
 import axios from "axios";
 import { useCookies } from "react-cookie";
 import { useHistory } from "react-router-dom";
 import AppointmentCard from "../../components/UI/AppointmentCard";
 const Account = () => {
   const [appointments, setAppointments] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [cookies] = useCookies();
   const history = useHistory();
   useEffect(() => {
     if (!cookies.token) history.push("/login");
+    setLoading(true);
     const getAppointments = async () => {
-      const res = await axios.get("http://localhost:3000/get-appointments", {
-        headers: {
-          authorization: cookies.token,
-        },
-      });
+      const res = await axios.get("http://localhost:3000/get-appointments");
       if (res) {
+        setLoading(false);
         setAppointments(res.data);
       }
     };
     getAppointments();
-  }, []);
+  }, [cookies.token, history]);
   return (
     <>
       <Container className="my-3">
@@ -33,26 +32,24 @@ const Account = () => {
             <Card bg="light" className="p-3">
               <Card.Title>Appointment Information</Card.Title>
               <Card.Body>
-                {appointments.length > 0 ? (
+                {loading && (
+                  <Row className="justify-content-center">
+                    <Spinner animation="border" role="status"></Spinner>
+                  </Row>
+                )}
+                {appointments.length > 0 &&
+                  !loading &&
                   appointments.map((appo) => (
                     <Row key={appo._id}>
                       <Col>
-                        <AppointmentCard
-                          name={appo.name}
-                          contact={appo.contact}
-                          date={appo.date}
-                          vehicleType={appo.vehicleType}
-                          serviceType={appo.serviceType}
-                          engineType={appo.engineType}
-                          description={appo.description}
-                        />
+                        <AppointmentCard order={appo} />
                       </Col>
                     </Row>
-                  ))
-                ) : (
-                  <h5 className="text-center text-muted">
-                    No appointment has been taken.
-                  </h5>
+                  ))}
+                {appointments.length === 0 && !loading && (
+                  <Row className="justify-content-center">
+                    <h5>No appointment found!</h5>
+                  </Row>
                 )}
               </Card.Body>
             </Card>

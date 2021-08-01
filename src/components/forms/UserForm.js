@@ -27,7 +27,7 @@ const UserForm = (props) => {
   const [lName, setLName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [cookie, setCookie] = useCookies(["isLoggedIn", "activeUser"]);
+  const [, setCookie] = useCookies(["isLoggedIn", "activeUser"]);
   const [found, setFound] = useState(false);
   const [exist, setExist] = useState(false);
   const [error, setError] = useState("");
@@ -50,17 +50,19 @@ const UserForm = (props) => {
   };
   const submitHandler = async (event) => {
     event.preventDefault();
-    console.log(props.admin);
+
     if (props.admin && props.type === "Log in") {
-      console.log("jii");
       const res = await axios.post("http://localhost:3000/admin-login", {
         email,
         password,
       });
-      console.log(res.data);
+
       if (res.data.status === "success") {
+        console.log("admin if");
         setCookie("isLoggedIn", true);
         dispatch(boolActions.setIsLoggedIn(true));
+        dispatch(userActions.setUser(res.data.user));
+        dispatch(boolActions.setAdmin(true));
         res.data.password = "";
         setCookie(["activeUser"], res.data.user);
         setCookie(["token"], res.data.token);
@@ -75,10 +77,11 @@ const UserForm = (props) => {
         email,
         password,
       });
-
-      if (res && res.data === "none") toggleFound(true);
-      else {
+      console.log("user if");
+      if (res && res.data.status === "none") {
         setError(res.data.error);
+        toggleFound(true);
+      } else {
         setCookie("isLoggedIn", true);
         dispatch(boolActions.setIsLoggedIn(true));
         dispatch(userActions.setUser(res.data.user));
@@ -90,23 +93,28 @@ const UserForm = (props) => {
         history.push("/");
       }
     } else if (props.type === "Sign up") {
-      const res = await axios.post("http://localhost:3000/signup", {
-        fName,
-        lName,
-        email,
-        password,
-      });
-
-      if (res && res.data === "saved") {
-        history.push({
-          pathname: "/login",
-          state: {
-            notice: "Login to continue",
-          },
+      if (fName && lName && email && password) {
+        const res = await axios.post("http://localhost:3000/signup", {
+          fName,
+          lName,
+          email,
+          password,
         });
-      }
-      if (res && res.data === "exist") {
-        setExist(true);
+
+        if (res && res.data === "saved") {
+          history.push({
+            pathname: "/login",
+            state: {
+              notice: "Login to continue",
+            },
+          });
+        }
+        if (res && res.data === "exist") {
+          setExist(true);
+        }
+      } else {
+        setError("All the fields are required!");
+        setFound(true);
       }
     }
   };

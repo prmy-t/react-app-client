@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { boolActions } from "../../store/boolSlice";
 import { useHistory } from "react-router-dom";
 
-const NavBar = () => {
+const NavBar = (props) => {
   const isLoggedIn = useSelector((state) => state.bools.isLoggedIn);
   const user = useSelector((state) => state.user);
   const dispatch = useDispatch(boolActions);
@@ -25,10 +25,19 @@ const NavBar = () => {
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="mr-auto">
-          <LinkContainer to="/">
-            <Nav.Link>Home</Nav.Link>
-          </LinkContainer>
-          {isLoggedIn && (
+          {!props.admin && isLoggedIn && (
+            <LinkContainer to="/">
+              <Nav.Link>Home</Nav.Link>
+            </LinkContainer>
+          )}
+
+          {props.admin && isLoggedIn && (
+            <LinkContainer to="/orders">
+              <Nav.Link>Orders</Nav.Link>
+            </LinkContainer>
+          )}
+
+          {!props.admin && isLoggedIn && (
             <LinkContainer to="/services">
               <Nav.Link>Services</Nav.Link>
             </LinkContainer>

@@ -1,10 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
 import userReducer from "./userSlice";
-import isLoggedInReducer from "./boolSlice";
-import authReducer from "./authSlice";
+import boolReducer from "./boolSlice";
+import varReducer from "./varSlice";
 
 const store = configureStore({
-  reducer: { user: userReducer, bools: isLoggedInReducer, auth: authReducer },
+  reducer: { user: userReducer, bools: boolReducer, vars: varReducer },
 });
 
 export default store;
