@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Button, Card, Col, Container, Row, Spinner } from "react-bootstrap";
+import { FaAngleRight } from "react-icons/fa";
 import { useCookies } from "react-cookie";
 import { useHistory } from "react-router-dom";
 export default function Orders() {
@@ -19,7 +20,7 @@ export default function Orders() {
       }
     };
     loadOrders();
-  }, []);
+  }, [cookies.token]);
 
   const clickHandler = (email) => {
     history.push("/orders/" + email);
@@ -36,16 +37,19 @@ export default function Orders() {
           {info.length > 0 &&
             !loading &&
             info.map((ele) => (
-              <Col lg="3" md="4" sm="6" xs="12" className="my-1" key={ele._id}>
+              <Col lg="4" md="6" sm="6" xs="12" className="my-1" key={ele._id}>
                 <Card bg="light" className="p-3">
-                  <Card.Title>{ele._id}</Card.Title>
+                  <Card.Title>Name: {ele._id}</Card.Title>
                   <Card.Body>
                     <h5>Orders: {ele.orders}</h5>
                   </Card.Body>
                   <Row className="justify-content-end">
-                    <Col lg="7" md="7" sm="7" xs="5">
+                    <Col lg="6" md="5" sm="7" xs="5">
                       <Button onClick={() => clickHandler(ele._id)}>
                         Explore
+                        <span>
+                          <FaAngleRight size="12" />
+                        </span>
                       </Button>
                     </Col>
                   </Row>

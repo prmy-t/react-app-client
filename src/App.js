@@ -1,5 +1,5 @@
 import { Route, Switch, useHistory } from "react-router-dom";
-import { Container, Modal, Button } from "react-bootstrap";
+import { Container } from "react-bootstrap";
 
 import { useDispatch, useSelector } from "react-redux";
 import { boolActions } from "./store/boolSlice";
@@ -20,58 +20,48 @@ import AdminLogin from "./pages/admin/AdminLogin";
 import Orders from "./pages/admin/Orders";
 import PersonalOrder from "./pages/admin/PersonalOrder";
 import { useEffect } from "react";
+import LogOutModal from "./components/UI/LogOutModal";
 // import EthHome from "./pages/eth/EthHome";
 const App = () => {
   const history = useHistory();
   const admin = useSelector((state) => state.bools.admin) ? "admin" : null;
-  const logOutModal = useSelector((state) => state.bools.logOutModal);
+
   const dispatch = useDispatch(boolActions);
-  const [cookies, , removeCookie] = useCookies(["isLoggedIn"]);
+  const [cookies, , removeCookie] = useCookies();
 
   if (cookies.isLoggedIn)
     axios.defaults.headers.common["Authorization"] = cookies.token;
+
   useEffect(() => {
     if (cookies.activeUser && cookies.isLoggedIn) {
-      if (cookies.activeUser.firstName === "admin")
-        dispatch(boolActions.setAdmin(true));
       dispatch(boolActions.setIsLoggedIn(cookies.isLoggedIn));
       dispatch(userActions.setUser(cookies.activeUser));
     }
-  }, [cookies, dispatch]);
+    if (
+      cookies.isLoggedIn &&
+      cookies.activeUser &&
+      cookies.activeUser.firstName === "admin"
+    )
+      dispatch(boolActions.setAdmin(true));
+  }, [cookies.isLoggedIn, cookies.activeUser, dispatch]);
 
   const closeHandler = () => {
     dispatch(boolActions.setLogOutModal(false));
   };
   const logOutHandler = () => {
-    console.log("logout handler");
-    removeCookie("isLoggedIn");
-    removeCookie("activeUser");
-    removeCookie("token");
+    removeCookie("isLoggedIn", { path: "/" });
+    removeCookie("activeUser", { path: "/" });
+    removeCookie("token", { path: "/" });
     dispatch(boolActions.setLogOutModal(false));
     dispatch(boolActions.setIsLoggedIn(false));
     dispatch(boolActions.setAdmin(false));
-
     history.push("/login");
+    console.log(cookies.isLoggedIn);
   };
   return (
     <Container>
       <NavBar admin={admin} />
-      <Modal
-        show={logOutModal}
-        onHide={closeHandler}
-        backdrop="static"
-        keyboard={false}
-      >
-        <Modal.Body>Are you sure you want to Log out ?</Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={closeHandler}>
-            Close
-          </Button>
-          <Button variant="primary" onClick={logOutHandler}>
-            Log Out
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      <LogOutModal logOutHandler={logOutHandler} closeHandler={closeHandler} />
 
       <Switch>
         <Route path="/" exact>

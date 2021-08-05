@@ -58,14 +58,13 @@ const UserForm = (props) => {
       });
 
       if (res.data.status === "success") {
-        console.log("admin if");
-        setCookie("isLoggedIn", true);
+        setCookie("isLoggedIn", true, { path: "/" });
         dispatch(boolActions.setIsLoggedIn(true));
         dispatch(userActions.setUser(res.data.user));
         dispatch(boolActions.setAdmin(true));
         res.data.password = "";
-        setCookie(["activeUser"], res.data.user);
-        setCookie(["token"], res.data.token);
+        setCookie("activeUser", res.data.user, { path: "/" });
+        setCookie("token", res.data.token, { path: "/" });
         axios.defaults.headers.common["Authorization"] = res.data.token;
         history.push("/");
       } else {
@@ -77,17 +76,17 @@ const UserForm = (props) => {
         email,
         password,
       });
-      console.log("user if");
+
       if (res && res.data.status === "none") {
         setError(res.data.error);
         toggleFound(true);
       } else {
-        setCookie("isLoggedIn", true);
+        setCookie("isLoggedIn", true, { path: "/" });
         dispatch(boolActions.setIsLoggedIn(true));
         dispatch(userActions.setUser(res.data.user));
         res.data.password = "";
-        setCookie(["activeUser"], res.data.user);
-        setCookie(["token"], res.data.token);
+        setCookie("activeUser", res.data.user, { path: "/" });
+        setCookie("token", res.data.token, { path: "/" });
         axios.defaults.headers.common["Authorization"] = res.data.token;
         toggleFound(false);
         history.push("/");
