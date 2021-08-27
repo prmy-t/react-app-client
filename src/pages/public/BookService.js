@@ -1,12 +1,11 @@
-import { Container, Row, Col, Button } from "react-bootstrap";
-import { useHistory, useParams } from "react-router-dom";
+import { Container, Row, Col } from "react-bootstrap";
+import { useParams } from "react-router-dom";
 import ServiceForm from "../../components/forms/ServiceForm";
-import { FaAngleLeft } from "react-icons/fa";
+import BackBtn from "../../components/buttons/BackBtn";
 import { useState } from "react";
 
 const BookService = () => {
   const params = useParams();
-  const history = useHistory();
 
   const serviceName = params.serviceName.split("-").join(" ").toUpperCase();
   const [page, setPage] = useState(1);
@@ -22,19 +21,10 @@ const BookService = () => {
 
     console.log(page);
   };
-  const backHandler = () => {
-    history.push("/services");
-  };
+
   return (
     <Container>
-      <Row className="my-2">
-        <Col lg="2" md="2" sm="2" xs="4">
-          <Button size="sm" variant="outline" onClick={backHandler}>
-            <FaAngleLeft />
-            Back
-          </Button>
-        </Col>
-      </Row>
+      <BackBtn />
       <Row>
         <Col className="text-center">
           <div className="h4">{serviceName}</div>

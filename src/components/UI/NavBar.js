@@ -55,7 +55,11 @@ const NavBar = (props) => {
             </>
           )}
           {isLoggedIn && (
-            <NavDropdown title={user.firstName} id="basic-nav-dropdown">
+            <NavDropdown
+              title={user.firstName}
+              alignRight
+              id="basic-nav-dropdown"
+            >
               <NavDropdown.Item onClick={accountHandler}>
                 Account
               </NavDropdown.Item>

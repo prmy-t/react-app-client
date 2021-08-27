@@ -6,7 +6,6 @@ import {
   Button,
   Container,
   Row,
-  Alert,
   Col,
   Card,
   InputGroup,
@@ -22,14 +21,16 @@ import {
   FaFileAlt,
 } from "react-icons/fa";
 import { useSelector } from "react-redux";
-
-const ServiceForm = (props) => {
+//component imports
+import Field from "./Field";
+import AnAlert from "../UI/AnAlert";
+const ServiceForm = () => {
   const params = useParams();
   const history = useHistory();
 
   const user = useSelector((state) => state.user);
   const serviceType = params.serviceName.split("-").join(" ");
-  const [filled] = useState(false);
+
   const [full, setFull] = useState(false);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -61,7 +62,6 @@ const ServiceForm = (props) => {
   };
   const checkDate = async () => {
     const email = user.email;
-
     if (name && date && vehicleType && engineType && description) {
       setIsLoading(true);
       setValidation(false);
@@ -96,59 +96,41 @@ const ServiceForm = (props) => {
               <Card.Body>
                 <Row className="justify-content-center mt-2">
                   <Col lg="5">
-                    <InputGroup>
-                      <InputGroup.Text>
-                        <FaUserAlt />
-                      </InputGroup.Text>
-                      <FormControl
-                        onChange={nameHandler}
-                        disabled={filled}
-                        placeholder="Enter your name"
-                      ></FormControl>
-                    </InputGroup>
+                    <Field
+                      children={<FaUserAlt />}
+                      handler={nameHandler}
+                      placeholder="Enter your name"
+                    />
                   </Col>
 
                   <Col lg="5">
-                    <InputGroup>
-                      <InputGroup.Text>
-                        <FaRegAddressBook />
-                      </InputGroup.Text>
-                      <FormControl
-                        onChange={contactHandler}
-                        type="number"
-                        placeholder="Enter contact number"
-                      ></FormControl>
-                    </InputGroup>
+                    <Field
+                      children={<FaRegAddressBook />}
+                      handler={contactHandler}
+                      placeholder="Enter contact number"
+                    />
                   </Col>
                 </Row>
                 <Row className="justify-content-center my-2">
                   <Col lg="5">
-                    <InputGroup>
-                      <InputGroup.Text>
-                        <FaCarSide />
-                      </InputGroup.Text>
-                      <FormControl
-                        onChange={vehicleHandler}
-                        placeholder="Enter vehicle type"
-                      ></FormControl>
-                    </InputGroup>
+                    <Field
+                      children={<FaCarSide />}
+                      handler={vehicleHandler}
+                      placeholder="Enter vehicle type"
+                    />
                   </Col>
 
                   <Col lg="5">
-                    <InputGroup>
-                      <InputGroup.Text>
-                        <FaSun />
-                      </InputGroup.Text>
-                      <FormControl
-                        onChange={engineHandler}
-                        placeholder="Enter engine type"
-                      ></FormControl>
-                    </InputGroup>
+                    <Field
+                      children={<FaSun />}
+                      handler={engineHandler}
+                      placeholder="Enter engine type"
+                    />
                   </Col>
                 </Row>
                 <Row className="justify-content-center my-1">
                   <Col lg="8">
-                    <InputGroup size="lg">
+                    <InputGroup>
                       <InputGroup.Text>
                         <FaFileAlt />
                       </InputGroup.Text>
@@ -187,27 +169,21 @@ const ServiceForm = (props) => {
             </Card.Body>
             <Row className="justify-content-between">
               <Col lg="8" md="8" sm="8" xs="12">
-                <Alert
+                <AnAlert
                   show={full}
                   variant="danger"
                   onClose={() => setFull(false)}
-                  dismissible
-                >
-                  <Alert.Heading className="h6">{error}</Alert.Heading>
-                </Alert>
+                  heading={error}
+                />
               </Col>
               <Col lg="8" md="8" sm="8" xs="12">
-                <Alert
+                <AnAlert
                   size="sm"
                   show={validation}
                   variant="info"
                   onClose={() => setValidation(false)}
-                  dismissible
-                >
-                  <Alert.Heading className="h5">
-                    All fields are required.
-                  </Alert.Heading>
-                </Alert>
+                  heading="All fields are required."
+                />
               </Col>
               <Col className="text-center" lg="3" md="3" sm="3" xs="4">
                 <Button

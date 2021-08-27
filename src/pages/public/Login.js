@@ -1,9 +1,15 @@
 import { Container, Row, Col } from "react-bootstrap";
 import UserForm from "../../components/forms/UserForm";
+import { motion } from "framer-motion";
 
 const Login = () => {
   return (
-    <Container className="mt-5">
+    <Container
+      as={motion.div}
+      className="mt-5"
+      exit={{ x: "-100vw" }}
+      transition={{ ease: "easeInOut" }}
+    >
       <Row className="justify-content-center">
         <Col lg="6" md="6" sm="10" xs="12">
           <UserForm

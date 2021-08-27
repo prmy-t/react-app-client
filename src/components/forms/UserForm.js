@@ -1,24 +1,17 @@
-import {
-  Row,
-  Col,
-  Form,
-  InputGroup,
-  Card,
-  FormControl,
-  Button,
-  Toast,
-} from "react-bootstrap";
+import { Row, Col, Form, Card, Button, Toast } from "react-bootstrap";
 import classes from "./UserForm.module.css";
 import { FaUserAlt, FaKey } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
+import { motion } from "framer-motion";
+import btnVariants from "../variants/button";
 
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { boolActions } from "../../store/boolSlice";
 import { useCookies } from "react-cookie";
 import { userActions } from "../../store/userSlice";
-
+import Field from "./Field";
 const UserForm = (props) => {
   const history = useHistory();
   const dispatch = useDispatch(boolActions);
@@ -177,26 +170,20 @@ const UserForm = (props) => {
           {props.type === "Sign up" ? (
             <Row className="justify-content-center">
               <Col lg="6" md="6" sm="6" xs="6">
-                <InputGroup className="m-1">
-                  <InputGroup.Text>
-                    <FaUserAlt />
-                  </InputGroup.Text>
-                  <FormControl
-                    onChange={fNameHandler}
-                    placeholder="First Name"
-                  ></FormControl>
-                </InputGroup>
+                <Field
+                  className="m-1"
+                  children={<FaUserAlt />}
+                  handler={fNameHandler}
+                  placeholder="First Name"
+                />
               </Col>
               <Col lg="6" md="6" sm="6" xs="6">
-                <InputGroup className="m-1">
-                  <InputGroup.Text>
-                    <FaUserAlt />
-                  </InputGroup.Text>
-                  <FormControl
-                    onChange={lNameHandler}
-                    placeholder="Last Name"
-                  ></FormControl>
-                </InputGroup>
+                <Field
+                  className="m-1"
+                  children={<FaUserAlt />}
+                  handler={lNameHandler}
+                  placeholder="Last Name"
+                />
               </Col>
             </Row>
           ) : (
@@ -204,35 +191,37 @@ const UserForm = (props) => {
           )}
           <Row className="justify-content-center">
             <Col lg="8" md="8" sm="8" xs="12">
-              <InputGroup className="m-1">
-                <InputGroup.Text>
-                  <FaUserAlt />
-                </InputGroup.Text>
-                <FormControl
-                  onChange={emailHandler}
-                  placeholder="Enter email"
-                ></FormControl>
-              </InputGroup>
+              <Field
+                className="m-1"
+                children={<FaUserAlt />}
+                handler={emailHandler}
+                placeholder="Enter email"
+              />
             </Col>
           </Row>
           <Row className="justify-content-center">
             <Col lg="8" md="8" sm="8" xs="12">
-              <InputGroup className="m-1">
-                <InputGroup.Text>
-                  <FaKey />
-                </InputGroup.Text>
-                <FormControl
-                  type="password"
-                  onChange={passwordHandler}
-                  placeholder={props.passwordHolder}
-                ></FormControl>
-              </InputGroup>
+              <Field
+                className="m-1"
+                type="password"
+                children={<FaKey />}
+                handler={passwordHandler}
+                placeholder={props.passwordHolder}
+              />
             </Col>
           </Row>
         </Card.Body>
         <Row className="justify-content-center">
           <Col lg="4" md="4" sm="4" xs="4" className="text-center">
-            <Button type="submit">{props.type}</Button>
+            <Button
+              as={motion.button}
+              variants={btnVariants}
+              whileHover="hover"
+              whileTap="tap"
+              type="submit"
+            >
+              {props.type}
+            </Button>
           </Col>
         </Row>
       </Form>

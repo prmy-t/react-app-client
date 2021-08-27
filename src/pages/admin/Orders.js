@@ -20,7 +20,7 @@ export default function Orders() {
       }
     };
     loadOrders();
-  }, [cookies.token]);
+  }, [cookies.token, history]);
 
   const clickHandler = (email) => {
     history.push("/orders/" + email);

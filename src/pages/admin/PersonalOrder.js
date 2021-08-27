@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { boolActions } from "../../store/boolSlice";
 import { useParams } from "react-router-dom";
 import AppointmentCard from "../../components/UI/AppointmentCard";
-import StatusModal from "../../components/UI/StatusModal";
+import StatusModal from "../../components/modals/StatusModal";
 
 export default function PersonalOrder() {
   const params = useParams();

@@ -4,7 +4,7 @@ import { BsTools, BsGearFill } from "react-icons/bs";
 import { FaCarAlt } from "react-icons/fa";
 import { GiCarWheel } from "react-icons/gi";
 import { useHistory } from "react-router-dom";
-// import { GrServices } from "react-icons/gr";
+
 const Services = () => {
   const history = useHistory();
   const clickHandler = (service) => {
