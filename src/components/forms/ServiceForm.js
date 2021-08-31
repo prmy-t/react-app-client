@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+
 import { useHistory, useParams } from "react-router-dom";
 import {
   Form,
@@ -24,16 +24,16 @@ import { useSelector } from "react-redux";
 //component imports
 import Field from "./Field";
 import AnAlert from "../UI/AnAlert";
+import { useMutation } from "react-query";
+import { createAppointment } from "../../api/public";
 const ServiceForm = () => {
   const params = useParams();
   const history = useHistory();
-
   const user = useSelector((state) => state.user);
   const serviceType = params.serviceName.split("-").join(" ");
-
+  const email = user.email;
   const [full, setFull] = useState(false);
   const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const [name, setName] = useState("");
   const [contact, setContact] = useState("");
   const [vehicleType, setVehicleType] = useState("");
@@ -41,6 +41,20 @@ const ServiceForm = () => {
   const [description, setDescription] = useState("");
   const [date, setDate] = useState("");
   const [validation, setValidation] = useState(false);
+  const { isLoading, mutate } = useMutation(createAppointment, {
+    onSuccess: async (data) => {
+      if (data.data.success === "appointment created") history.push("/account");
+      else {
+        setError(data.data.error);
+        console.log(data.data.error);
+        setFull(true);
+      }
+    },
+    onError: async (error) => {
+      setFull(true);
+      setError(error);
+    },
+  });
 
   const nameHandler = (e) => {
     setName(e.target.value);
@@ -61,11 +75,10 @@ const ServiceForm = () => {
     setDate(e.target.value);
   };
   const checkDate = async () => {
-    const email = user.email;
+    // const email = user.email;
     if (name && date && vehicleType && engineType && description) {
-      setIsLoading(true);
       setValidation(false);
-      const res = await axios.post("http://localhost:3000/create-appointment", {
+      mutate({
         name,
         email,
         contact,
@@ -75,14 +88,6 @@ const ServiceForm = () => {
         description,
         date,
       });
-      console.log(res.data);
-      if (res.data.success === "appointment created") {
-        history.push("/account");
-      } else {
-        setIsLoading(false);
-        setFull(true);
-        setError(res.data.error);
-      }
     } else setValidation(true);
   };
 
