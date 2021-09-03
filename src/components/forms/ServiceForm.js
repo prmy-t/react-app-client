@@ -178,7 +178,7 @@ const ServiceForm = () => {
                   heading={error}
                 />
               </Col>
-              <Col lg="8" md="8" sm="8" xs="12">
+              <Col lg="8" md="8" sm="12" xs="12">
                 <AnAlert
                   size="sm"
                   show={validation}
@@ -187,7 +187,7 @@ const ServiceForm = () => {
                   heading="All fields are required."
                 />
               </Col>
-              <Col className="text-center" lg="3" md="3" sm="3" xs="4">
+              <Col className="text-right" lg="3" md="3" sm="12" xs="12">
                 <Button
                   disabled={isLoading}
                   onClick={isLoading ? null : checkDate}

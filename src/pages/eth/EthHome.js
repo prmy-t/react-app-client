@@ -20,14 +20,10 @@ const EthHome = () => {
   const [dropSelection, setDropSelection] = useState("");
   const [outValue, setOutValue] = useState(0);
 
-  console.log(typeof options);
   const optionSelect = (value) => {
     setDropSelection(value);
   };
-  //   const dropHandler = (event) => {
-  //     setDropSelection(event.target.value);
-  //     console.log(event.target.value);
-  //   };
+
   const ETHHandler = (event) => {
     setEth(event.target.value);
   };

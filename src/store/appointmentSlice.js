@@ -42,15 +42,10 @@ const appointmentSlice = createSlice({
     [getAppointment.rejected]: (state) => {
       state.status = "failed";
     },
-    // [getPersonalAppointment.pending]: (state) => {
-    //   state.status = "loading";
-    // },
+
     [getPersonalAppointment.fulfilled]: (state, { payload }) => {
       state.pAppointments = payload.data;
     },
-    // [getPersonalAppointment.rejected]: (state) => {
-    //   state.status = "failed";
-    // },
 
     [setStatusApi.fulfilled]: (state) => {
       window.location.reload();

@@ -38,7 +38,6 @@ const UserForm = (props) => {
     setLName(event.target.value);
   };
   const emailHandler = (event) => {
-    console.log(email);
     setEmail(event.target.value);
   };
   const passwordHandler = (event) => {
@@ -48,10 +47,6 @@ const UserForm = (props) => {
     event.preventDefault();
 
     if (props.admin && props.type === "Log in") {
-      // postAdminLogin({
-      //   email,
-      //   password,
-      // });
       const res = await axios.post("http://localhost:3000/admin-login", {
         email,
         password,
@@ -72,19 +67,15 @@ const UserForm = (props) => {
         setError(res.data.error);
       }
     } else if (props.type === "Log in") {
-      // postUserLogin({
-      //   email,
-      //   password,
-      // });
       const res = await axios.post("http://localhost:3000/login", {
         email,
         password,
       });
-      if (res && res.status === "none") {
-        setError(res.error);
+
+      if (res && res.data.status === "none") {
+        setError(res.data.error);
         toggleFound(true);
       } else {
-        console.log(res);
         setCookie("isLoggedIn", true, { path: "/" });
         dispatch(boolActions.setIsLoggedIn(true));
         dispatch(userActions.setUser(res.data.user));
@@ -97,7 +88,7 @@ const UserForm = (props) => {
       }
     } else if (props.type === "Sign up") {
       if (fName && lName && email && password) {
-        const res = axios.post("http://localhost:3000/signup", {
+        const res = await axios.post("http://localhost:3000/signup", {
           fName,
           lName,
           email,

@@ -14,11 +14,12 @@ const Services = () => {
     <Container className="mt-5">
       <Row>
         <Col className="h5">
-          <FaCarAlt /> Register online for our Services
+          <FaCarAlt />
+          Register online for our Services
         </Col>
       </Row>
       <Row>
-        <Col lg="3" md="3" sm="5" xs="12">
+        <Col lg="3" md="3" sm="5" xs="12" className="text-center">
           <Button
             onClick={() => clickHandler("annual-service")}
             variant="outline-info"
@@ -28,7 +29,7 @@ const Services = () => {
             Annual Service
           </Button>
         </Col>
-        <Col lg="3" md="3" sm="5" xs="12">
+        <Col lg="3" md="3" sm="5" xs="12" className="text-center">
           <Button
             onClick={() => clickHandler("major-service")}
             variant="outline-info"
@@ -38,7 +39,7 @@ const Services = () => {
             Major Service
           </Button>
         </Col>
-        <Col lg="3" md="3" sm="5" xs="12">
+        <Col lg="3" md="3" sm="5" xs="12" className="text-center">
           <Button
             onClick={() => clickHandler("repair-fault")}
             variant="outline-info"
@@ -48,7 +49,7 @@ const Services = () => {
             Repair/Fault
           </Button>
         </Col>
-        <Col lg="3" md="3" sm="5" xs="12">
+        <Col lg="3" md="3" sm="5" xs="12" className="text-center">
           <Button
             onClick={() => clickHandler("major-repair")}
             variant="outline-info"
