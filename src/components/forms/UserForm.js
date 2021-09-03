@@ -5,15 +5,13 @@ import { useEffect, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import btnVariants from "../variants/button";
-import { useMutation } from "react-query";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { boolActions } from "../../store/boolSlice";
 import { useCookies } from "react-cookie";
 import { userActions } from "../../store/userSlice";
 import Field from "./Field";
-import { adminLogin } from "../../api/admin";
-import { postPublicLogin, postPublicSingUp } from "../../api/public";
+
 const UserForm = (props) => {
   //Variables
   const history = useHistory();
@@ -29,65 +27,6 @@ const UserForm = (props) => {
   const [error, setError] = useState("");
   let [notice, setNotice] = useState(null);
 
-  //Query
-  const { mutate: postAdminLogin } = useMutation(adminLogin, {
-    onSuccess: async (res) => {
-      if (res.status === "success") {
-        setCookie("isLoggedIn", true, { path: "/" });
-        dispatch(boolActions.setIsLoggedIn(true));
-        dispatch(userActions.setUser(res.user));
-        dispatch(boolActions.setAdmin(true));
-        res.password = "";
-        setCookie("activeUser", res.user, { path: "/" });
-        setCookie("token", res.token, { path: "/" });
-        axios.defaults.headers.common["Authorization"] = res.token;
-        history.push("/");
-      }
-    },
-    onError: async (res) => {
-      setFound(true);
-      setError(res.error);
-    },
-  });
-
-  const { mutate: postSignUp } = useMutation(postPublicSingUp, {
-    onSuccess: async (data) => {
-      console.log(data);
-      if (data === "saved") {
-        history.push({
-          pathname: "/login",
-          state: {
-            notice: "Login to continue",
-          },
-        });
-      }
-      if (data === "exist") {
-        setExist(true);
-      }
-    },
-    onError: async (error) => {
-      console.log(error);
-    },
-  });
-  const { mutate: postUserLogin } = useMutation(postPublicLogin, {
-    onSuccess: async (res) => {
-      if (res && res.status === "none") {
-        setError(res.error);
-        toggleFound(true);
-      } else {
-        setCookie("isLoggedIn", true, { path: "/" });
-        dispatch(boolActions.setIsLoggedIn(true));
-        dispatch(userActions.setUser(res.user));
-        res.password = "";
-        setCookie("activeUser", res.user, { path: "/" });
-        setCookie("token", res.token, { path: "/" });
-        axios.defaults.headers.common["Authorization"] = res.token;
-        toggleFound(false);
-        history.push("/");
-      }
-    },
-  });
-
   useEffect(() => {
     if (location.state) setNotice(location.state.notice);
   }, [location.state]);
@@ -99,6 +38,7 @@ const UserForm = (props) => {
     setLName(event.target.value);
   };
   const emailHandler = (event) => {
+    console.log(email);
     setEmail(event.target.value);
   };
   const passwordHandler = (event) => {
@@ -108,42 +48,72 @@ const UserForm = (props) => {
     event.preventDefault();
 
     if (props.admin && props.type === "Log in") {
-      postAdminLogin({
-        email,
-        password,
-      });
-      // const res = await axios.post("http://localhost:3000/admin-login", {
+      // postAdminLogin({
       //   email,
       //   password,
       // });
-
-      // if (res.data.status === "success") {
-      //   setCookie("isLoggedIn", true, { path: "/" });
-      //   dispatch(boolActions.setIsLoggedIn(true));
-      //   dispatch(userActions.setUser(res.data.user));
-      //   dispatch(boolActions.setAdmin(true));
-      //   res.data.password = "";
-      //   setCookie("activeUser", res.data.user, { path: "/" });
-      //   setCookie("token", res.data.token, { path: "/" });
-      //   axios.defaults.headers.common["Authorization"] = res.data.token;
-      //   history.push("/");
-      // } else {
-      //   setFound(true);
-      //   setError(res.data.error);
-      // }
-    } else if (props.type === "Log in") {
-      postUserLogin({
+      const res = await axios.post("http://localhost:3000/admin-login", {
         email,
         password,
       });
+
+      if (res.data.status === "success") {
+        setCookie("isLoggedIn", true, { path: "/" });
+        dispatch(boolActions.setIsLoggedIn(true));
+        dispatch(userActions.setUser(res.data.user));
+        dispatch(boolActions.setAdmin(true));
+        res.data.password = "";
+        setCookie("activeUser", res.data.user, { path: "/" });
+        setCookie("token", res.data.token, { path: "/" });
+        axios.defaults.headers.common["Authorization"] = res.data.token;
+        history.push("/");
+      } else {
+        setFound(true);
+        setError(res.data.error);
+      }
+    } else if (props.type === "Log in") {
+      // postUserLogin({
+      //   email,
+      //   password,
+      // });
+      const res = await axios.post("http://localhost:3000/login", {
+        email,
+        password,
+      });
+      if (res && res.status === "none") {
+        setError(res.error);
+        toggleFound(true);
+      } else {
+        console.log(res);
+        setCookie("isLoggedIn", true, { path: "/" });
+        dispatch(boolActions.setIsLoggedIn(true));
+        dispatch(userActions.setUser(res.data.user));
+        res.data.password = "";
+        setCookie("activeUser", res.data.user, { path: "/" });
+        setCookie("token", res.data.token, { path: "/" });
+        axios.defaults.headers.common["Authorization"] = res.data.token;
+        toggleFound(false);
+        history.push("/");
+      }
     } else if (props.type === "Sign up") {
       if (fName && lName && email && password) {
-        postSignUp({
+        const res = axios.post("http://localhost:3000/signup", {
           fName,
           lName,
           email,
           password,
         });
+        if (res.data === "saved") {
+          history.push({
+            pathname: "/login",
+            state: {
+              notice: "Login to continue",
+            },
+          });
+        }
+        if (res.data === "exist") {
+          setExist(true);
+        }
       } else {
         setError("All the fields are required!");
         setFound(true);

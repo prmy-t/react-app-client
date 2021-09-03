@@ -1,27 +1,30 @@
 import { useEffect } from "react";
 import { Button, Card, Col, Container, Row, Spinner } from "react-bootstrap";
 import { FaAngleRight } from "react-icons/fa";
-
+import { useDispatch, useSelector } from "react-redux";
 import { useCookies } from "react-cookie";
 import { useHistory } from "react-router-dom";
-
-import { useQuery } from "react-query";
-import { getOrders } from "../../api/admin";
+import { getOrders } from "../../store/orderSlice";
 
 export default function Orders() {
   const history = useHistory();
+  const dispatch = useDispatch();
+  const orders = useSelector((state) => state.orders.orders);
+  const status = useSelector((state) => state.orders.status);
   const [cookies] = useCookies();
-  const { isLoading, data: orders, isError } = useQuery("getOrders", getOrders);
+
   useEffect(() => {
+    dispatch(getOrders());
     if (!cookies.isLoggedIn && !cookies.token) history.push("/login");
-  });
+  }, [cookies, dispatch, history]);
 
   const clickHandler = (email) => {
     history.push("/orders/" + email);
   };
+
   return (
     <Container className="my-3">
-      {isLoading && (
+      {status === "loading" && (
         <Row className="justify-content-center">
           <Spinner animation="border" role="status"></Spinner>
         </Row>
@@ -29,7 +32,7 @@ export default function Orders() {
       <Row>
         {orders &&
           orders.length > 0 &&
-          !isLoading &&
+          status === "success" &&
           orders.map((ele) => (
             <Col lg="4" md="6" sm="6" xs="12" className="my-1" key={ele._id}>
               <Card bg="light" className="p-3">
@@ -50,12 +53,12 @@ export default function Orders() {
               </Card>
             </Col>
           ))}
-        {orders && orders.length < 0 && !isLoading && (
+        {orders && orders.length < 0 && status === "success" && (
           <Col className="text-center" variant="danger">
             No appointments are taken!
           </Col>
         )}
-        {isError && (
+        {status === "failed" && (
           <Col className="text-center" variant="danger">
             Error fetching api. Try reloading page.
           </Col>
